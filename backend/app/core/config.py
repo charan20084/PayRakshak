@@ -12,9 +12,9 @@ class Settings(BaseSettings):
     # CORS configuration
     CORS_ORIGINS: str = "http://localhost:5173,http://127.0.0.1:5173"
 
-    # Database configuration (MySQL via PyMySQL)
+    # Database configuration (Supabase PostgreSQL via Psycopg2 or MySQL fallback)
     DATABASE_URL: str = Field(
-        default="mysql+pymysql://root:password@localhost:3306/payrakshak",
+        default="postgresql+psycopg2://postgres.gelufrsfozrfhqhoravs:password@aws-0-ap-northeast-1.pooler.supabase.com:5432/postgres",
         description="SQLAlchemy database connection string"
     )
 

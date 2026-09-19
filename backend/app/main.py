@@ -9,15 +9,20 @@ from app.api.history import router as history_router
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # Auto-create MySQL tables on startup if database is accessible
+    # Auto-create tables on startup if database is accessible
     try:
-        from app.database.connection import engine
+        from sqlalchemy import text
+        from app.database.connection import engine, is_postgres
         from app.database.base import Base
         import app.models  # ensure models are registered
+        if is_postgres:
+            with engine.connect() as conn:
+                conn.execute(text("CREATE SCHEMA IF NOT EXISTS payrakshak;"))
+                conn.commit()
         Base.metadata.create_all(bind=engine)
         print("[Database] Schema check/initialization completed successfully.")
     except Exception as exc:
-        print(f"[Database Warning] Table creation could not connect to MySQL: {exc}")
+        print(f"[Database Warning] Database initialization check: {exc}")
     yield
 
 app = FastAPI(
