@@ -19,6 +19,7 @@ from app.schemas.payment import (
     DemoAccountResponse,
     PaymentConfirmationRequest,
     PaymentConfirmationResponse,
+    TopUpRequest,
 )
 from app.services.risk_engine import risk_engine
 from app.services.gemini_service import gemini_service
@@ -49,7 +50,7 @@ def get_or_create_demo_account(db: Session) -> DemoAccount:
 @router.get("/balance", response_model=DemoAccountResponse)
 async def get_demo_balance(db: Session = Depends(get_db)):
     """
-    Retrieve the current simulated/demo bank balance (Initial: ₹25,000.00).
+    Retrieve the current simulated/demo bank balance (Initial: ₹2,00,000.00).
     """
     account = get_or_create_demo_account(db)
     return DemoAccountResponse(
@@ -64,10 +65,31 @@ async def get_demo_balance(db: Session = Depends(get_db)):
 @router.post("/balance/reset", response_model=DemoAccountResponse)
 async def reset_demo_balance(db: Session = Depends(get_db)):
     """
-    Reset simulated demo bank balance back to the starting ₹25,000.00.
+    Reset simulated demo bank balance back to the starting ₹2,00,000.00.
     """
     account = get_or_create_demo_account(db)
     account.balance = INITIAL_DEMO_BALANCE
+    db.commit()
+    db.refresh(account)
+    return DemoAccountResponse(
+        account_number=account.account_number,
+        account_holder=account.account_holder,
+        available_balance=float(account.balance),
+        currency=account.currency,
+        is_demo=True
+    )
+
+
+@router.post("/balance/topup", response_model=DemoAccountResponse)
+async def topup_demo_balance(
+    request: TopUpRequest,
+    db: Session = Depends(get_db)
+):
+    """
+    Add funds / Top-up simulated demo bank balance for presentation demonstrations.
+    """
+    account = get_or_create_demo_account(db)
+    account.balance = float(account.balance) + float(request.amount)
     db.commit()
     db.refresh(account)
     return DemoAccountResponse(

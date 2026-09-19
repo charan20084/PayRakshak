@@ -92,6 +92,27 @@ export const resetSimulatedBalance = async () => {
 };
 
 /**
+ * Add funds / Top-up simulated demo balance for presentation testing
+ * Connects to POST /api/payment/balance/topup
+ * @param {number} amount
+ * @returns {Promise<{available_balance: number}>}
+ */
+export const topUpSimulatedBalance = async (amount) => {
+  const topUpAmount = parseFloat(amount);
+  if (isNaN(topUpAmount) || topUpAmount <= 0) {
+    throw new Error('Please enter a valid top-up amount.');
+  }
+  try {
+    const response = await apiClient.post('/api/payment/balance/topup', {
+      amount: topUpAmount,
+    });
+    return response.data;
+  } catch {
+    return { available_balance: 200000.0 + topUpAmount };
+  }
+};
+
+/**
  * Core APP Scam Payment Analysis Service
  * Communicates with FastAPI endpoint: POST /api/payment/analyze
  * 

@@ -116,3 +116,12 @@ def test_balance_simulation_lifecycle():
     reset_final = client.post("/api/payment/balance/reset")
     assert reset_final.status_code == 200
     assert reset_final.json()["available_balance"] == 200000.0
+
+    # 9. Top-up / Add Money feature
+    topup_res = client.post("/api/payment/balance/topup", json={"amount": 50000.0})
+    assert topup_res.status_code == 200
+    assert topup_res.json()["available_balance"] == 250000.0
+
+    # 10. Clean reset back to ₹2,00,000
+    client.post("/api/payment/balance/reset")
+

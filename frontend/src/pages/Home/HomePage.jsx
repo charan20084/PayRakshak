@@ -8,14 +8,25 @@ import {
   ArrowUpRight,
   ArrowDownLeft,
   RotateCw,
+  PlusCircle,
+  X,
+  CheckCircle2,
+  Loader2,
+  Wallet,
 } from 'lucide-react';
 import MobileShell from '../../components/layout/MobileShell';
-import { getSimulatedBalance, resetSimulatedBalance } from '../../services/api';
+import { getSimulatedBalance, resetSimulatedBalance, topUpSimulatedBalance } from '../../services/api';
 
 export default function HomePage() {
   const navigate = useNavigate();
   const [balance, setBalance] = useState(200000.0);
   const [isResetting, setIsResetting] = useState(false);
+  
+  // Add Money Modal State
+  const [isTopUpOpen, setIsTopUpOpen] = useState(false);
+  const [topUpAmount, setTopUpAmount] = useState('50000');
+  const [isTopUpLoading, setIsTopUpLoading] = useState(false);
+  const [topUpSuccessMsg, setTopUpSuccessMsg] = useState(null);
 
   const fetchBalance = () => {
     getSimulatedBalance()
@@ -32,7 +43,7 @@ export default function HomePage() {
   }, []);
 
   const handleResetDemoBalance = async (e) => {
-    e.stopPropagation();
+    e?.stopPropagation();
     setIsResetting(true);
     try {
       const res = await resetSimulatedBalance();
@@ -45,6 +56,38 @@ export default function HomePage() {
       setTimeout(() => setIsResetting(false), 500);
     }
   };
+
+  const handleTopUpSubmit = async (e) => {
+    e.preventDefault();
+    const val = parseFloat(topUpAmount);
+    if (isNaN(val) || val <= 0) return;
+
+    setIsTopUpLoading(true);
+    try {
+      const res = await topUpSimulatedBalance(val);
+      if (res && typeof res.available_balance === 'number') {
+        setBalance(res.available_balance);
+      } else {
+        setBalance((prev) => prev + val);
+      }
+      setTopUpSuccessMsg(`Successfully added ₹${val.toLocaleString('en-IN')} to demo account!`);
+      setTimeout(() => {
+        setTopUpSuccessMsg(null);
+        setIsTopUpOpen(false);
+      }, 1200);
+    } catch {
+      setBalance((prev) => prev + val);
+      setTopUpSuccessMsg(`Added ₹${val.toLocaleString('en-IN')} (Offline demo mode)`);
+      setTimeout(() => {
+        setTopUpSuccessMsg(null);
+        setIsTopUpOpen(false);
+      }, 1200);
+    } finally {
+      setIsTopUpLoading(false);
+    }
+  };
+
+  const presetAmounts = ['10000', '25000', '50000', '100000'];
 
   const frequentContacts = [
     { id: 'c1', initials: 'AR', name: 'Arjun', vpa: 'arjun@upi', color: 'teal', type: 'friend', avg: 800 },
@@ -73,26 +116,51 @@ export default function HomePage() {
           <div className="greeting-text">
             Good morning, <strong>Rahul Sharma</strong>
           </div>
-          <button
-            className="badge-available"
-            onClick={handleResetDemoBalance}
-            title="Click to reset demo balance to ₹2,00,000"
-            style={{
-              cursor: 'pointer',
-              border: 'none',
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '4px',
-              transition: 'opacity 0.2s',
-            }}
-          >
-            <RotateCw size={11} className={isResetting ? 'animate-spin' : ''} />
-            DEMO BALANCE
-          </button>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <button
+              className="badge-available"
+              onClick={() => setIsTopUpOpen(true)}
+              title="Add simulated funds to account"
+              style={{
+                cursor: 'pointer',
+                border: 'none',
+                background: '#0d9488',
+                color: '#ffffff',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '4px',
+                fontWeight: 600,
+                padding: '3px 8px',
+                borderRadius: '12px',
+                fontSize: '0.68rem',
+              }}
+            >
+              <PlusCircle size={12} />
+              + ADD MONEY
+            </button>
+            <button
+              className="badge-available"
+              onClick={handleResetDemoBalance}
+              title="Click to reset demo balance to ₹2,00,000"
+              style={{
+                cursor: 'pointer',
+                border: 'none',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '4px',
+                transition: 'opacity 0.2s',
+              }}
+            >
+              <RotateCw size={11} className={isResetting ? 'animate-spin' : ''} />
+              RESET
+            </button>
+          </div>
         </div>
 
         <div className="balance-label">SIMULATED AVAILABLE BALANCE</div>
-        <div className="balance-amount">₹{balance.toLocaleString('en-IN', { minimumFractionDigits: 0, maximumFractionDigits: 2 })}</div>
+        <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between' }}>
+          <div className="balance-amount">₹{balance.toLocaleString('en-IN', { minimumFractionDigits: 0, maximumFractionDigits: 2 })}</div>
+        </div>
         <div className="account-subinfo">PayRakshak Demo Savings ··4471 · rahul@payrakshak</div>
 
         <div className="monthly-spend-tracker">
@@ -190,6 +258,224 @@ export default function HomePage() {
           </div>
         ))}
       </div>
+
+      {/* 5. Add Money / Top-up Demo Balance Modal */}
+      {isTopUpOpen && (
+        <div
+          style={{
+            position: 'fixed',
+            inset: 0,
+            background: 'rgba(0, 0, 0, 0.65)',
+            backdropFilter: 'blur(4px)',
+            display: 'flex',
+            alignItems: 'flex-end',
+            justifyContent: 'center',
+            zIndex: 9999,
+          }}
+          onClick={() => !isTopUpLoading && setIsTopUpOpen(false)}
+        >
+          <div
+            style={{
+              width: '100%',
+              maxWidth: '430px',
+              background: '#1e293b',
+              borderTopLeftRadius: '24px',
+              borderTopRightRadius: '24px',
+              border: '1px solid rgba(255, 255, 255, 0.1)',
+              padding: '1.5rem',
+              color: '#ffffff',
+              boxShadow: '0 -10px 25px rgba(0, 0, 0, 0.5)',
+              animation: 'slideUp 0.25s ease-out',
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Modal Header */}
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.2rem' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+                <div
+                  style={{
+                    width: 38,
+                    height: 38,
+                    borderRadius: '10px',
+                    background: 'rgba(13, 148, 136, 0.2)',
+                    color: '#2dd4bf',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}
+                >
+                  <Wallet size={20} />
+                </div>
+                <div>
+                  <h3 style={{ margin: 0, fontSize: '1.1rem', fontWeight: 700, fontFamily: 'var(--font-sans)' }}>
+                    Add Demo Balance
+                  </h3>
+                  <span style={{ fontSize: '0.72rem', color: '#94a3b8' }}>
+                    Simulated top-up for live presentation
+                  </span>
+                </div>
+              </div>
+              <button
+                onClick={() => setIsTopUpOpen(false)}
+                disabled={isTopUpLoading}
+                style={{
+                  background: 'rgba(255, 255, 255, 0.08)',
+                  border: 'none',
+                  color: '#94a3b8',
+                  borderRadius: '50%',
+                  width: 32,
+                  height: 32,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  cursor: 'pointer',
+                }}
+              >
+                <X size={18} />
+              </button>
+            </div>
+
+            {/* Current Balance Meta */}
+            <div
+              style={{
+                background: 'rgba(15, 23, 42, 0.6)',
+                border: '1px solid rgba(255, 255, 255, 0.05)',
+                borderRadius: '12px',
+                padding: '0.75rem 1rem',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                marginBottom: '1rem',
+              }}
+            >
+              <span style={{ fontSize: '0.8rem', color: '#94a3b8' }}>Current Available:</span>
+              <span style={{ fontSize: '0.95rem', fontWeight: 700, color: '#38bdf8' }}>
+                ₹{balance.toLocaleString('en-IN')}
+              </span>
+            </div>
+
+            {/* Top-up Form */}
+            <form onSubmit={handleTopUpSubmit}>
+              <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 600, color: '#cbd5e1', marginBottom: '0.4rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                Enter Top-up Amount (₹)
+              </label>
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  background: '#0f172a',
+                  borderRadius: '14px',
+                  border: '1px solid #334155',
+                  padding: '0.6rem 1rem',
+                  marginBottom: '1rem',
+                }}
+              >
+                <span style={{ fontSize: '1.4rem', fontWeight: 700, color: '#94a3b8', marginRight: '0.4rem' }}>₹</span>
+                <input
+                  type="number"
+                  min="1"
+                  step="100"
+                  value={topUpAmount}
+                  onChange={(e) => setTopUpAmount(e.target.value)}
+                  placeholder="50000"
+                  style={{
+                    width: '100%',
+                    background: 'transparent',
+                    border: 'none',
+                    outline: 'none',
+                    color: '#ffffff',
+                    fontSize: '1.3rem',
+                    fontWeight: 700,
+                    fontFamily: 'var(--font-sans)',
+                  }}
+                  required
+                />
+              </div>
+
+              {/* Preset Chips */}
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '0.5rem', marginBottom: '1.2rem' }}>
+                {presetAmounts.map((amt) => (
+                  <button
+                    key={amt}
+                    type="button"
+                    onClick={() => setTopUpAmount(amt)}
+                    style={{
+                      background: topUpAmount === amt ? '#0d9488' : 'rgba(255, 255, 255, 0.06)',
+                      border: topUpAmount === amt ? '1px solid #2dd4bf' : '1px solid rgba(255, 255, 255, 0.1)',
+                      color: topUpAmount === amt ? '#ffffff' : '#cbd5e1',
+                      borderRadius: '10px',
+                      padding: '0.5rem 0.2rem',
+                      fontSize: '0.75rem',
+                      fontWeight: 600,
+                      cursor: 'pointer',
+                      transition: 'all 0.15s',
+                    }}
+                  >
+                    +₹{parseInt(amt) >= 100000 ? `${parseInt(amt) / 100000}L` : `${parseInt(amt) / 1000}k`}
+                  </button>
+                ))}
+              </div>
+
+              {/* Success Notification */}
+              {topUpSuccessMsg && (
+                <div
+                  style={{
+                    background: 'rgba(16, 185, 129, 0.15)',
+                    border: '1px solid #10b981',
+                    borderRadius: '10px',
+                    padding: '0.6rem 0.8rem',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.5rem',
+                    color: '#6ee7b7',
+                    fontSize: '0.82rem',
+                    fontWeight: 600,
+                    marginBottom: '1rem',
+                  }}
+                >
+                  <CheckCircle2 size={16} />
+                  <span>{topUpSuccessMsg}</span>
+                </div>
+              )}
+
+              {/* Submit Button */}
+              <button
+                type="submit"
+                disabled={isTopUpLoading || !topUpAmount || parseFloat(topUpAmount) <= 0}
+                style={{
+                  width: '100%',
+                  background: 'linear-gradient(135deg, #0d9488 0%, #0f766e 100%)',
+                  border: 'none',
+                  borderRadius: '14px',
+                  padding: '0.9rem',
+                  color: '#ffffff',
+                  fontSize: '0.95rem',
+                  fontWeight: 700,
+                  cursor: isTopUpLoading ? 'not-allowed' : 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '0.5rem',
+                  boxShadow: '0 4px 14px rgba(13, 148, 136, 0.4)',
+                  transition: 'opacity 0.2s',
+                }}
+              >
+                {isTopUpLoading ? (
+                  <>
+                    <Loader2 size={18} className="animate-spin" />
+                    Adding Funds...
+                  </>
+                ) : (
+                  <>
+                    <PlusCircle size={18} />
+                    Deposit ₹{parseFloat(topUpAmount || 0).toLocaleString('en-IN')} to Demo Account
+                  </>
+                )}
+              </button>
+            </form>
+          </div>
+        </div>
+      )}
     </MobileShell>
   );
 }

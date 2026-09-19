@@ -94,3 +94,8 @@ class PaymentConfirmationResponse(BaseModel):
     previous_balance: float
     remaining_balance: float
     deducted: bool
+
+
+class TopUpRequest(BaseModel):
+    amount: float = Field(..., gt=0, le=10000000, description="Amount to add to demo balance in INR")
+
