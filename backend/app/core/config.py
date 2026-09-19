@@ -10,7 +10,12 @@ class Settings(BaseSettings):
     PORT: int = 8000
 
     # CORS configuration
-    CORS_ORIGINS: str = "http://localhost:5173,http://127.0.0.1:5173"
+    CORS_ORIGINS: str = (
+        "http://localhost:5173,http://127.0.0.1:5173,"
+        "http://localhost:8080,http://127.0.0.1:8080,"
+        "http://localhost:3000,http://127.0.0.1:3000,"
+        "https://pay-rakshak.vercel.app"
+    )
 
     # Database configuration (Supabase PostgreSQL via Psycopg2 or MySQL fallback)
     DATABASE_URL: str = Field(
@@ -26,7 +31,19 @@ class Settings(BaseSettings):
 
     @property
     def cors_origin_list(self) -> List[str]:
-        return [origin.strip() for origin in self.CORS_ORIGINS.split(",") if origin.strip()]
+        origins: List[str] = []
+        for origin in self.CORS_ORIGINS.split(","):
+            cleaned = origin.strip()
+            if cleaned:
+                origins.append(cleaned)
+                if cleaned.endswith("/"):
+                    origins.append(cleaned.rstrip("/"))
+                else:
+                    origins.append(f"{cleaned}/")
+        prod_origin = "https://pay-rakshak.vercel.app"
+        if prod_origin not in origins:
+            origins.extend([prod_origin, f"{prod_origin}/"])
+        return list(dict.fromkeys(origins))
 
     class Config:
         env_file = ".env"

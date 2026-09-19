@@ -5,7 +5,8 @@ import axios from 'axios';
  * Base URL defaults to empty string in development to leverage Vite's proxy,
  * falling back to VITE_API_BASE_URL or http://localhost:8000.
  */
-const baseURL = import.meta.env.VITE_API_BASE_URL || '';
+const rawBaseURL = import.meta.env.VITE_API_BASE_URL || '';
+const baseURL = typeof rawBaseURL === 'string' ? rawBaseURL.trim().replace(/\/+$/, '') : '';
 
 export const apiClient = axios.create({
   baseURL,
