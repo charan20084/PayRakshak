@@ -1,0 +1,102 @@
+{
+  "_notice": "PAYRAKSHAK EVALUATION BENCHMARK DATASET",
+  "_disclaimer": "Purely synthetic test evaluation suite used to measure precision, recall, and false-positive rates of deterministic risk rules and AI contextual warnings.",
+  "benchmark_metrics_target": {
+    "target_app_detection_rate": ">= 95%",
+    "target_false_positive_rate_benign": "<= 3%",
+    "latency_sla_deterministic_ms": "<= 50ms",
+    "latency_sla_with_gemini_ms": "<= 2000ms"
+  },
+  "eval_scenarios": [
+    {
+      "id": "BENCH_001",
+      "category": "BENIGN_REGULAR",
+      "expected_risk_level": "LOW",
+      "expected_action": "ALLOW",
+      "expected_signals_count": 0,
+      "payload": {
+        "amount": 500.0,
+        "beneficiary": "arjun@upi",
+        "new_beneficiary": false,
+        "new_device": false,
+        "transactions_last_10_min": 0,
+        "previous_average": 800.0,
+        "location_changed": false,
+        "unusual_time": false,
+        "context_note": "Dinner split"
+      }
+    },
+    {
+      "id": "BENCH_002",
+      "category": "BENIGN_KNOWN_RECURRING",
+      "expected_risk_level": "LOW",
+      "expected_action": "ALLOW",
+      "expected_signals_count": 0,
+      "payload": {
+        "amount": 1250.0,
+        "beneficiary": "priya.sharma@okhdfcbank",
+        "new_beneficiary": false,
+        "new_device": false,
+        "transactions_last_10_min": 0,
+        "previous_average": 1000.0,
+        "location_changed": false,
+        "unusual_time": false,
+        "context_note": "Monthly shared broadband bill"
+      }
+    },
+    {
+      "id": "BENCH_003",
+      "category": "ELEVATED_NEW_MERCHANT",
+      "expected_risk_level": "MEDIUM",
+      "expected_action": "WARN",
+      "expected_signals_count": 2,
+      "payload": {
+        "amount": 6500.0,
+        "beneficiary": "flash.deals@paytm",
+        "new_beneficiary": true,
+        "new_device": false,
+        "transactions_last_10_min": 0,
+        "previous_average": 1800.0,
+        "location_changed": false,
+        "unusual_time": false,
+        "context_note": "Promotional discount purchase"
+      }
+    },
+    {
+      "id": "BENCH_004",
+      "category": "APP_OVERPAYMENT_REFUND_SCAM",
+      "expected_risk_level": "HIGH",
+      "expected_action": "INTERVENE",
+      "expected_signals_count": 4,
+      "payload": {
+        "amount": 80000.0,
+        "beneficiary": "refund.help@upi",
+        "new_beneficiary": true,
+        "new_device": true,
+        "transactions_last_10_min": 4,
+        "previous_average": 2500.0,
+        "location_changed": false,
+        "unusual_time": false,
+        "context_note": "Urgent customs refund release"
+      }
+    },
+    {
+      "id": "BENCH_005",
+      "category": "APP_AUTHORITY_IMPERSONATION",
+      "expected_risk_level": "HIGH",
+      "expected_action": "INTERVENE",
+      "expected_signals_count": 4,
+      "payload": {
+        "amount": 85000.0,
+        "beneficiary": "customs.clearance.dept@upi",
+        "new_beneficiary": true,
+        "new_device": true,
+        "transactions_last_10_min": 4,
+        "previous_average": 2000.0,
+        "location_changed": true,
+        "unusual_time": false,
+        "context_note": "Urgent customs clearance duty tax"
+      }
+    }
+  ]
+}

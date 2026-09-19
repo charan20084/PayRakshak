@@ -1,0 +1,66 @@
+{
+  "_notice": "SYNTHETIC SOCIAL-ENGINEERING & APP SCAM CHAT/SMS DATASET",
+  "_disclaimer": "All text messages, sender names, entities, and phone/VPA handles below are purely simulated synthetic examples for research and risk evaluation. No real personal or financial data is included.",
+  "synthetic_messages": [
+    {
+      "id": "MSG_APP_001",
+      "scam_archetype": "ACCIDENTAL_OVERPAYMENT_REFUND",
+      "risk_level": "HIGH",
+      "sender_label": "Unknown Caller / WhatsApp",
+      "text": "Hello sir, by mistake I transferred Rs 80,000 to your GooglePay instead of my brother for medical emergency. Please be kind and send it back immediately to refund.help@upi before my hospital discharge gets cancelled!",
+      "detected_keywords": ["mistake", "transferred", "Rs 80,000", "send it back", "immediately", "hospital", "cancelled"],
+      "urgency_rating": "CRITICAL",
+      "recommended_action": "INTERVENE"
+    },
+    {
+      "id": "MSG_APP_002",
+      "scam_archetype": "ELECTRICITY_DISCONNECTION_THREAT",
+      "risk_level": "HIGH",
+      "sender_label": "Fake Utility Alert SMS",
+      "text": "Dear Consumer, your electricity power will be disconnected tonight at 9:30 PM due to unpaid bill of previous month. Immediately call our officer at 9876543210 and pay verification token fee Rs 100 via UPI link or supply will be permanently cut.",
+      "detected_keywords": ["disconnected", "tonight", "unpaid bill", "immediately", "officer", "verification token"],
+      "urgency_rating": "HIGH",
+      "recommended_action": "INTERVENE"
+    },
+    {
+      "id": "MSG_APP_003",
+      "scam_archetype": "CUSTOMS_PARCEL_IMPERSONATION",
+      "risk_level": "HIGH",
+      "sender_label": "Fake Customs Department Alert",
+      "text": "URGENT NOTICE: A parcel sent to your name from UK containing foreign currency has been intercepted by customs at Delhi airport. Pay clearance duty tax Rs 85,000 to customs.clearance.dept@upi within 2 hours or police FIR will be registered under money laundering act.",
+      "detected_keywords": ["URGENT NOTICE", "parcel", "foreign currency", "intercepted", "customs", "clearance duty", "within 2 hours", "police FIR"],
+      "urgency_rating": "EXTREME",
+      "recommended_action": "INTERVENE"
+    },
+    {
+      "id": "MSG_APP_004",
+      "scam_archetype": "PART_TIME_JOB_INVESTMENT_TASK",
+      "risk_level": "MEDIUM",
+      "sender_label": "Telegram Job Recruiter",
+      "text": "Congratulations! You are selected for YouTube Video Like & Review part-time job. Earn Rs 3,000 to Rs 8,000 daily. To unlock VIP merchant commission task, pay security deposit Rs 6,500 to flash.deals@paytm. Refundable with 30% profit in 15 mins.",
+      "detected_keywords": ["part-time job", "Earn Rs", "daily", "VIP merchant", "security deposit", "30% profit in 15 mins"],
+      "urgency_rating": "MODERATE",
+      "recommended_action": "WARN"
+    },
+    {
+      "id": "MSG_APP_005",
+      "scam_archetype": "BENIGN_PERSONAL_SPLIT",
+      "risk_level": "LOW",
+      "sender_label": "Roommate / Friend",
+      "text": "Hey, here is the dinner split for yesterday's pizza. It came to 500 each. Send it over to arjun@upi when you get a chance, no rush!",
+      "detected_keywords": ["dinner split", "pizza", "no rush"],
+      "urgency_rating": "NONE",
+      "recommended_action": "ALLOW"
+    },
+    {
+      "id": "MSG_APP_006",
+      "scam_archetype": "BENIGN_GROCERY_PURCHASE",
+      "risk_level": "LOW",
+      "sender_label": "Local Store QR",
+      "text": "Payment for grocery items invoice #9401 at Corner Mart. Total Rs 450. Thank you for shopping with us.",
+      "detected_keywords": ["invoice", "grocery items", "thank you"],
+      "urgency_rating": "NONE",
+      "recommended_action": "ALLOW"
+    }
+  ]
+}

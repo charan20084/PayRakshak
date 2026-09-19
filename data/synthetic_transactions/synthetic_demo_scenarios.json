@@ -1,0 +1,73 @@
+{
+  "_notice": "SYNTHETIC DEMO DATASET FOR PAYRAKSHAK APP SCAM DETECTION",
+  "_disclaimer": "All accounts, names, VPAs, and transactions below are purely synthetic simulations created for evaluation and testing. No real customer or financial information is included.",
+  "synthetic_scenarios": [
+    {
+      "scenario_id": "SCENARIO_LOW_01",
+      "scenario_name": "Routine Personal Transfer",
+      "expected_risk_level": "LOW",
+      "expected_action": "ALLOW",
+      "transaction_payload": {
+        "beneficiary": "arjun@upi",
+        "amount": 500.0,
+        "new_beneficiary": false,
+        "new_device": false,
+        "transactions_last_10_min": 0,
+        "previous_average": 800.0,
+        "location_changed": false,
+        "unusual_time": false,
+        "context_note": "Dinner split"
+      },
+      "expected_characteristics": {
+        "deviation_ratio": 0.625,
+        "urgency_detected": false,
+        "device_anomaly": false
+      }
+    },
+    {
+      "scenario_id": "SCENARIO_MEDIUM_01",
+      "scenario_name": "Unfamiliar Merchant with Moderate Amount Deviation",
+      "expected_risk_level": "MEDIUM",
+      "expected_action": "WARN",
+      "transaction_payload": {
+        "beneficiary": "flash.deals@paytm",
+        "amount": 6500.0,
+        "new_beneficiary": true,
+        "new_device": false,
+        "transactions_last_10_min": 0,
+        "previous_average": 1800.0,
+        "location_changed": false,
+        "unusual_time": false,
+        "context_note": "Promotional discount purchase"
+      },
+      "expected_characteristics": {
+        "deviation_ratio": 3.61,
+        "urgency_detected": false,
+        "device_anomaly": false
+      }
+    },
+    {
+      "scenario_id": "SCENARIO_HIGH_01",
+      "scenario_name": "Overpayment Return Lure (APP Scam Pattern)",
+      "expected_risk_level": "HIGH",
+      "expected_action": "INTERVENE",
+      "transaction_payload": {
+        "beneficiary": "refund.help@upi",
+        "amount": 80000.0,
+        "new_beneficiary": true,
+        "new_device": true,
+        "transactions_last_10_min": 4,
+        "previous_average": 2500.0,
+        "location_changed": false,
+        "unusual_time": false,
+        "context_note": "Urgent customs refund release"
+      },
+      "expected_characteristics": {
+        "deviation_ratio": 32.0,
+        "urgency_detected": true,
+        "device_anomaly": true,
+        "velocity_elevated": true
+      }
+    }
+  ]
+}
